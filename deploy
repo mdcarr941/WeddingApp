@@ -1,0 +1,11 @@
+#!/bin/bash
+outPath=/tmp/WeddingApp
+dotnet publish -c Release -r linux-x64 -o "$outPath" || exit $?
+
+cd $(dirname "$outPath")
+outDir=$(basename "$outPath")
+zipFile="$outDir.zip"
+zip -r "$zipFile" "$outDir"
+scp "$zipFile" matt@terra:~/
+ssh matt@terra unzip "$zipFile"
+cd -

@@ -22,7 +22,7 @@ namespace WeddingApp.Lib.Data
         /// <returns></returns>
         public async Task<WebConfiguration> WebConfig()
         {
-            var webConfig = await Set<WebConfiguration>().FirstOrDefaultAsync();
+            var webConfig = await Set<WebConfiguration>().FindAsync(WebConfiguration.SingletonId);
             if (webConfig is null)
             {
                 webConfig = WebConfiguration.Default;

@@ -8,7 +8,7 @@
         public static short SingletonId => 1;
         public short Id { get; } = SingletonId;
 
-        public string? RsvpPassword { get; init; }
+        public string? RsvpPassword { get; set; }
 
         /// <summary>
         /// The default <see cref="WebConfiguration"/> settings.
@@ -16,7 +16,7 @@
         public static WebConfiguration Default { get; }
             = new WebConfiguration
             {
-                RsvpPassword = "A heart as full as the moon."
+                RsvpPassword = @"A\s*heart\s*as\s*full\s*as\s*the\s*moon\.?"
             };
     }
 }

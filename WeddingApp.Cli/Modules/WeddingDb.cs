@@ -7,12 +7,19 @@ using WeddingApp.Lib.Data;
 
 namespace WeddingApp.Cli.Modules
 {
-    [Command("weddigdb", "Commands for working with the wedding DB.")]
+    [Command("weddingdb", "Commands for working with the wedding DB.")]
     public class WeddingDb : ConsoleAppBase
     {
         private readonly WeddingDbContext _weddingDb;
 
         public WeddingDb(WeddingDbContext weddingDb) => _weddingDb = weddingDb;
+
+        [Command("update", "Update the wedding DB to the latest migration.")]
+        public async Task Update()
+        {
+            await _weddingDb.Database.MigrateAsync();
+            Console.WriteLine("Wedding DB update complete.");
+        }
 
         [Command("list-rsvps", "List all of the rsvps in the database.")]
         public async Task ListRsvps()
@@ -33,6 +40,24 @@ namespace WeddingApp.Cli.Modules
             var rsvps = await _weddingDb.Rsvps.ToListAsync();
             using var writer = new StreamWriter(File.OpenWrite(filePath));
             await writer.WriteAsync(Rsvp.ToCsv(rsvps));
+        }
+
+        [Command("rsvp-passphrase", "Get or set the RSVP passphrase.")]
+        public async Task GetPassphrase(
+            [Option(0)] string? newPassphrase = null
+        )
+        {
+            var config = await _weddingDb.WebConfig();
+            if (newPassphrase is null)
+            {
+                Console.WriteLine($"Stored passphrase: '{config.RsvpPassword}'");
+            }
+            else
+            {
+                config.RsvpPassword = newPassphrase;
+                _weddingDb.Set<WebConfiguration>().Update(config);
+                await _weddingDb.SaveChangesAsync();
+            }
         }
     }
 }

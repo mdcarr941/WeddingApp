@@ -3,13 +3,14 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using WeddingApp.Lib;
 using WeddingApp.Lib.Data;
 
 namespace WeddingApp.Web.Controllers
 {
     public record RsvpMessage(
-        string Password,
+        string Passphrase,
         string Email,
         string Name
     );
@@ -27,7 +28,8 @@ namespace WeddingApp.Web.Controllers
         public async Task<IActionResult> Submit([FromForm] RsvpMessage message)
         {
             var config = await _weddingDb.WebConfig();
-            if (!config.RsvpPassword.Equals(message.Password, StringComparison.OrdinalIgnoreCase))
+            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace;
+            if (!Regex.IsMatch(message.Passphrase, config.RsvpPassword, options))
                 return Unauthorized("Incorrect password, please try again.");
 
             _weddingDb.Rsvps.Add(new Rsvp(message.Email, message.Name));
