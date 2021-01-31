@@ -1,28 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WeddingApp.Lib.Data
 {
-    public record Rsvp(string Email, string Name, bool EmailConfirmed = false)
-    {
-        public string ToCsv()
-            => $"{Email},{Name},{EmailConfirmed}";
-
-        public static string ToCsv(IEnumerable<Rsvp> rsvps)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine($"{nameof(Email)},{nameof(Name)},{nameof(EmailConfirmed)}");
-            foreach (var rsvp in rsvps)
-            {
-                builder.AppendLine(rsvp.ToCsv());
-            }
-            return builder.ToString();
-        }
-    }
-
     public class WeddingDbContext : DbContext
     {
         public static string ConnStringName { get; } = "WeddingDb";
@@ -60,6 +41,9 @@ namespace WeddingApp.Lib.Data
         private void ConfigureRsvp(EntityTypeBuilder<Rsvp> entityBuilder)
         {
             entityBuilder.HasKey(e => e.Email);
+            entityBuilder.Property(e => e.Name);
+            entityBuilder.Property(e => e.EmailConfirmed);
+            entityBuilder.Property(e => e.CreatedOnUtc);
         }
 
         private void ConfigureWebConfiguration(EntityTypeBuilder<WebConfiguration> entityBuilder)

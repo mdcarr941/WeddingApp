@@ -28,7 +28,7 @@ namespace WeddingApp.Web.Controllers
         {
             var config = await _weddingDb.WebConfig();
             if (!config.RsvpPassword.Equals(message.Password, StringComparison.OrdinalIgnoreCase))
-                return Unauthorized();
+                return Unauthorized("Incorrect password, please try again.");
 
             _weddingDb.Rsvps.Add(new Rsvp(message.Email, message.Name));
             try
@@ -45,7 +45,7 @@ namespace WeddingApp.Web.Controllers
                 throw;
             }
 
-            return Ok();
+            return Ok("RSVP submitted succesfully.");
         }
     }
 }
