@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WeddingApp.Lib.Data
 {
-    public record Rsvp(int Pin, string Name, string Email, bool EmailConfirmed = false);
+    public record Rsvp(string Email, string Name, bool EmailConfirmed = false);
 
     public class WeddingDbContext : DbContext
     {
@@ -24,7 +24,7 @@ namespace WeddingApp.Lib.Data
 
         private void ConfigureRsvp(EntityTypeBuilder<Rsvp> entityBuilder)
         {
-            entityBuilder.HasKey(e => e.Pin);
+            entityBuilder.HasKey(e => e.Email);
         }
     }
 }

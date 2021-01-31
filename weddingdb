@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ -z "$WEDDINGAPPDIR" ]]; then
+	WEDDINGAPPDIR="$PWD"
+fi
+
+cd "$WEDDINGAPPDIR/WeddingApp.Cli" || exit 1
+cmd="dotnet ef $@ --project ../WeddingApp.Lib --context WeddingDbContext"
+echo "$cmd"
+eval "$cmd"
+cd -

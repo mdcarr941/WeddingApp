@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 using WeddingApp.Lib.Data;
 
 namespace WeddingApp.Lib.Extensions
@@ -13,6 +14,8 @@ namespace WeddingApp.Lib.Extensions
             this DbContextOptionsBuilder builder,
             IConfiguration config
         )
-            => builder.UseSqlite(config.GetConnectionString(WeddingDbContext.ConnStringName));
+            => builder.UseSqlite(
+                Environment.ExpandEnvironmentVariables(
+                    config.GetConnectionString(WeddingDbContext.ConnStringName)));
     }
 }
