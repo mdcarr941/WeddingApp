@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WeddingApp.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "weddingdb export-rsvps \"%userprofile%/rsvps.csv\""
+    }
+  }
+}
