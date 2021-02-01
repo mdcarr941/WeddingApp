@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using WeddingApp.Lib;
@@ -29,7 +28,7 @@ namespace WeddingApp.Web.Controllers
         {
             var config = await _weddingDb.WebConfig();
             const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace;
-            if (!Regex.IsMatch(message.Passphrase, config.RsvpPassword, options))
+            if (message.Passphrase is null || !Regex.IsMatch(message.Passphrase, config.RsvpPassword, options))
                 return Unauthorized("Incorrect password, please try again.");
 
             _weddingDb.Rsvps.Add(new Rsvp(message.Email, message.Name));
