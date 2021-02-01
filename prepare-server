@@ -1,0 +1,4 @@
+#!/bin/sh
+ssh -t $@\
+    sudo useradd -d /var/lib/weddingapp -m -s /sbin/nologin weddingapp\
+    \&\& sudo chmod 0755 /var/lib/weddingapp

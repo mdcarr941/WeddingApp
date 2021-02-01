@@ -19,7 +19,7 @@ namespace WeddingApp.Lib.Data
             Name = name;
         }
 
-        public string ToCsv()
+        public override string ToString()
             => $"{Email},{Name},{EmailConfirmed},{CreatedOnUtc}";
 
         public static string ToCsv(IEnumerable<Rsvp> rsvps)
@@ -28,7 +28,7 @@ namespace WeddingApp.Lib.Data
             builder.AppendLine($"{nameof(Email)},{nameof(Name)},{nameof(EmailConfirmed)},{nameof(CreatedOnUtc)}");
             foreach (var rsvp in rsvps)
             {
-                builder.AppendLine(rsvp.ToCsv());
+                builder.AppendLine(rsvp.ToString());
             }
             return builder.ToString();
         }

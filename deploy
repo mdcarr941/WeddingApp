@@ -6,6 +6,13 @@ cd $(dirname "$outPath")
 outDir=$(basename "$outPath")
 zipFile="$outDir.zip"
 zip -r "$zipFile" "$outDir"
-scp "$zipFile" matt@terra:~/
-ssh matt@terra unzip "$zipFile"
+scp "$zipFile" matt@terra:/tmp
+ssh -t matt@terra\
+    sudo unzip -o "/tmp/$zipFile" -d /var/lib/weddingapp\
+    \&\& cd /var/lib/weddingapp/WeddingApp\
+    \&\& sudo -u weddingapp ./WeddingApp.Cli weddingdb update\
+    \&\& sudo ln -fs /var/lib/weddingapp/WeddingApp/WeddingApp.Web.service /etc/systemd/system/WeddingApp.Web.service\
+    \&\& sudo systemctl daemon-reload\
+    \&\& sudo systemctl enable WeddingApp.Web.service\
+    \&\& sudo systemctl restart WeddingApp.Web.service
 cd -

@@ -1,0 +1,18 @@
+[Unit]
+Description=the backend for the wedding website.
+After=network.target
+Wants=network.target
+
+[Service]
+User=weddingapp
+WorkingDirectory=/var/lib/weddingapp/WeddingApp
+ExecStart=/var/lib/weddingapp/WeddingApp/WeddingApp.Web
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=WeddingApp.Web
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

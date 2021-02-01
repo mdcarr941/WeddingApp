@@ -6,7 +6,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WeddingApp.Lib\WeddingApp.Lib.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.1" />
   </ItemGroup>
 
-
+  <ItemGroup>
+    <Content Include="WeddingApp.Web.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
