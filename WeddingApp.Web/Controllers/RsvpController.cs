@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using WeddingApp.Lib;
 using WeddingApp.Lib.Data;
+using WeddingApp.Lib.Services;
 
 namespace WeddingApp.Web.Controllers
 {
@@ -19,9 +20,15 @@ namespace WeddingApp.Web.Controllers
     public class RsvpController : ControllerBase
     {
         private readonly WeddingDbContext _weddingDb;
+        private readonly EmailService _emailService;
 
-        public RsvpController(WeddingDbContext weddingDb)
-            => _weddingDb = weddingDb;
+        public RsvpController(
+            WeddingDbContext weddingDb,
+            EmailService emailService)
+        {
+            _weddingDb = weddingDb;
+            _emailService = emailService;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Submit([FromForm] RsvpMessage message)
@@ -46,7 +53,8 @@ namespace WeddingApp.Web.Controllers
                 throw;
             }
 
-            return Ok("RSVP submitted succesfully.");
+            await _emailService.SendRsvpConfirmation(message.Name, message.Email);
+            return Ok("RSVP submitted successfully. Please check your email for confirmation.");
         }
     }
 }
