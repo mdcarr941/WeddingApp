@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace WeddingApp.Lib.Data
@@ -40,7 +41,9 @@ namespace WeddingApp.Lib.Data
         /// </summary>
         public async Task<EmailConfirmationCode> EmailConfirmationCode(string email)
         {
-            var confirmation = await EmailConfirmationCodes.FindAsync(email);
+            var confirmation = await EmailConfirmationCodes
+                .Where(e => e.Email == email)
+                .FirstOrDefaultAsync();
             if (confirmation is null)
             {
                 confirmation = new EmailConfirmationCode(email);
