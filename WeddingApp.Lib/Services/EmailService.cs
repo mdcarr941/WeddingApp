@@ -24,8 +24,9 @@ namespace WeddingApp.Lib.Services
         {
             if (_RsvpEmail is null)
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                const string resourceName = "WeddingApp.Lib.RsvpEmail.html";
+                var assembly = Assembly.GetAssembly(typeof(EmailService))
+                    ?? throw new ArgumentNullException($"The assembly containing {nameof(EmailService)} could not be found.");
+                const string resourceName = "WeddingApp.Lib.Services.RsvpEmail.html";
                 using var resourceStream = assembly.GetManifestResourceStream(resourceName)
                     ?? throw new ArgumentNullException($"Embedded RSVP email could not be found at '{resourceName}'.");
                 using var reader = new StreamReader(resourceStream);
