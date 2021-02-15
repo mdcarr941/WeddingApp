@@ -8,8 +8,9 @@ namespace WeddingApp.Lib.Data
     {
         public string? Email { get; }
         public string? Name { get; }
-        public bool EmailConfirmed { get; }
+        public bool EmailConfirmed { get; set; }
         public DateTime CreatedOnUtc { get; } = DateTime.UtcNow;
+        public virtual  EmailConfirmationCode? ConfirmationCode { get; }
 
         private Rsvp() { }
 

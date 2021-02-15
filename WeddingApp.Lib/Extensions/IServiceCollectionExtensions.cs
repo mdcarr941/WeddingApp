@@ -22,6 +22,6 @@ namespace WeddingApp.Lib.Extensions
                     ?? throw new ArgumentNullException($"The {nameof(IConfiguration)} service is not registered.");
                 return configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
             })
-            .AddSingleton<EmailService>();
+            .AddScoped<EmailService>();
     }
 }

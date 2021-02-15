@@ -1,3 +1,5 @@
+@model WeddingApp.Web.Controllers.SubmissionViewModel
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -11,14 +13,15 @@
         <header>
             <img class="centered" src="https://wedding.carrfound.org/julia_set_960_600.png" height="200" width="320">
         </header>
-        <p class="centered">
-            Your RSVP has been received. We'll send the link to our wedding
-            ceremony stream to this email address. Look forward to seeing you!
+        <p class="centered pad-top">
+            @if (Model.Success)
+            {
+                <span>Your email was successfully confirmed!</span>
+            }
+            else
+            {
+                <span>Something went wrong! Please contact wedding@carrfound.org to let us know.</span>
+            }
         </p>
-        <div>
-            <a class="btn btn-primary" href="https://wedding.carrfound.org/app/emailconfirmation/submission/${Code}">
-                Confirm Your Email Address
-            </a>
-        </div>
     </body>
 </html>

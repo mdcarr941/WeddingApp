@@ -3,7 +3,9 @@ using MimeKit;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WeddingApp.Lib.Data;
 
 namespace WeddingApp.Lib.Services
 {
@@ -20,7 +22,10 @@ namespace WeddingApp.Lib.Services
     public class EmailService
     {
         private static string? _RsvpEmail = null;
-        public static async Task<string> RsvpEmail()
+        private static readonly Regex EmailVariableRgx
+            = new Regex(@"\${([^}]+)}", RegexOptions.Compiled);
+
+        public static async Task<string> RsvpEmail(EmailConfirmationCode confirmation)
         {
             if (_RsvpEmail is null)
             {
@@ -32,12 +37,21 @@ namespace WeddingApp.Lib.Services
                 using var reader = new StreamReader(resourceStream);
                 _RsvpEmail = await reader.ReadToEndAsync();
             }
-            return _RsvpEmail;
+            return EmailVariableRgx.Replace(
+                _RsvpEmail,
+                match => "Code" == match.Groups[1].Value ? confirmation.Code.ToString() : match.Groups[0].Value);
         }
 
         private readonly EmailConfiguration _configuration;
-        public EmailService(EmailConfiguration configuration)
-            => _configuration = configuration;
+        private readonly WeddingDbContext _weddingDb;
+
+        public EmailService(
+            EmailConfiguration configuration,
+            WeddingDbContext weddingDb)
+        {
+            _configuration = configuration;
+            _weddingDb = weddingDb;
+        }
 
         public async Task Send(MimeMessage message)
         {
@@ -51,23 +65,21 @@ namespace WeddingApp.Lib.Services
             await client.DisconnectAsync(true);
         }
 
-        public async Task SendRsvpConfirmation(InternetAddress to, InternetAddress? from = null)
+        public async Task SendRsvpConfirmation(string name, string email, InternetAddress? from = null)
         {
             if (from is null) from = new MailboxAddress(
                 _configuration.DefaultSenderName,
                 _configuration.DefaultSenderAddress);
 
+            var to = new MailboxAddress(name, email);
             var message = new MimeMessage();
             message.From.Add(from);
             message.To.Add(to);
             message.Subject = "Julia & Matthew's Wedding RSVP Confirmation";
             var builder = new BodyBuilder();
-            builder.HtmlBody = await RsvpEmail();
+            builder.HtmlBody = await RsvpEmail(await _weddingDb.EmailConfirmationCode(email));;
             message.Body = builder.ToMessageBody();
             await Send(message);
         }
-
-        public Task SendRsvpConfirmation(string? name, string? email, InternetAddress? from = null)
-            => SendRsvpConfirmation(new MailboxAddress(name, email), from);
     }
 }
