@@ -63,6 +63,7 @@ namespace WeddingApp.Lib.Data
         private void ConfigureRsvp(EntityTypeBuilder<Rsvp> entityBuilder)
         {
             entityBuilder.HasKey(e => e.Email);
+            entityBuilder.Property(e => e.Accepted);
             entityBuilder.Property(e => e.Name);
             entityBuilder.Property(e => e.EmailConfirmed);
             entityBuilder.Property(e => e.CreatedOnUtc);

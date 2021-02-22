@@ -10,6 +10,7 @@ using WeddingApp.Lib.Services;
 namespace WeddingApp.Web.Controllers
 {
     public record RsvpMessage(
+        string Response,
         string Passphrase,
         string Email,
         string Name
@@ -38,7 +39,8 @@ namespace WeddingApp.Web.Controllers
             if (message.Passphrase is null || !Regex.IsMatch(message.Passphrase, config.RsvpPassword, options))
                 return Unauthorized("Incorrect password, please try again.");
 
-            _weddingDb.Rsvps.Add(new Rsvp(message.Email, message.Name));
+            var accepted = bool.Parse(message.Response);
+            _weddingDb.Rsvps.Add(new Rsvp(message.Email, message.Name, accepted));
             try
             {
                 await _weddingDb.SaveChangesAsync();
