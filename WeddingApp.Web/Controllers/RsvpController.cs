@@ -55,8 +55,15 @@ namespace WeddingApp.Web.Controllers
                 throw;
             }
 
-            await _emailService.SendRsvpConfirmation(message.Name, message.Email);
-            return Ok("RSVP submitted successfully. Please check your email for confirmation.");
+            if (accepted)
+            {
+                await _emailService.SendRsvpConfirmation(message.Name, message.Email);
+                return Ok("RSVP submitted successfully. Please check your email for confirmation.");
+            }
+            else
+            {
+                return Ok("RSVP submitted successfully.");
+            }
         }
     }
 }
