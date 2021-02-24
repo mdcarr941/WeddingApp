@@ -34,11 +34,14 @@ namespace WeddingApp.Cli.Modules
 
         [Command("export-rsvps", "Export the RSVPS from the database to the given file.")]
         public async Task ExportRsvps(
-            [Option(0, "Path to the file were the exported CSV file will be saved.")] string filePath
+            [Option(0, "Path where the exported CSV file will be saved.")] string? filePath = null
         )
         {
             var rsvps = await _weddingDb.Rsvps.ToListAsync();
-            using var writer = new StreamWriter(File.OpenWrite(filePath));
+            using var stream = filePath is null
+                ? System.Console.OpenStandardOutput()
+                : File.OpenWrite(filePath);
+            using var writer = new StreamWriter(stream);
             await writer.WriteAsync(Rsvp.ToCsv(rsvps));
         }
 

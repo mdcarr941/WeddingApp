@@ -1,0 +1,14 @@
+[Unit]
+Description=wedding DB download.
+After=network.target
+Wants=network.target
+
+[Service]
+User=matt
+ExecStart=/etc/systemd/system/weddingdb-download.sh
+Type=oneshot
+Environment=WEDDING_SERVER=freja
+Environment=RSVP_PATH=/srv/syncthing/matt/rsvps.csv
+
+[Install]
+WantedBy=multi-user.target

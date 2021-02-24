@@ -1,0 +1,9 @@
+[Unit]
+Description=Run the wedding DB download hourly.
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1hr
+
+[Install]
+WantedBy=timers.target
