@@ -65,21 +65,33 @@ namespace WeddingApp.Lib.Services
             await client.DisconnectAsync(true);
         }
 
-        public async Task SendRsvpConfirmation(string name, string email, InternetAddress? from = null)
+        public async Task Send(
+            string recipientName,
+            string recipientAddr,
+            string subject,
+            string body,
+            InternetAddress? from = null)
         {
             if (from is null) from = new MailboxAddress(
                 _configuration.DefaultSenderName,
                 _configuration.DefaultSenderAddress);
 
-            var to = new MailboxAddress(name, email);
+            var to = new MailboxAddress(recipientName, recipientAddr);
             var message = new MimeMessage();
             message.From.Add(from);
             message.To.Add(to);
-            message.Subject = "Julia & Matthew's Wedding RSVP Confirmation";
+            message.Subject = subject;
             var builder = new BodyBuilder();
-            builder.HtmlBody = await RsvpEmail(await _weddingDb.EmailConfirmationCode(email));;
+            builder.HtmlBody = body;
             message.Body = builder.ToMessageBody();
             await Send(message);
         }
+
+        public async Task SendRsvpConfirmation(string recipientName, string recipientAddr)
+            => await Send(
+                recipientName,
+                recipientAddr,
+                "Julia & Matthew's Wedding RSVP Confirmation",
+                await RsvpEmail(await _weddingDb.EmailConfirmationCode(recipientAddr)));
     }
 }
