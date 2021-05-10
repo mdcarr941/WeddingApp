@@ -14,7 +14,10 @@ namespace WeddingApp.Cli
 
         public static IHostBuilder CreateHostBuilder(string[] args)
             => Host.CreateDefaultBuilder(args)
-                .ConfigureServices((context, services)
-                    => services.AddWeddingDbContext(context.Configuration));
+                .ConfigureServices((context, services) => 
+                {
+                    services.AddWeddingDbContext(context.Configuration);
+                    services.AddEmailService();
+                });
     }
 }
