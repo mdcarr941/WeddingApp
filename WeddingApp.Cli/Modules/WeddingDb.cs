@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using WeddingApp.Lib.Data;
+using WeddingApp.Lib.Services;
 
 namespace WeddingApp.Cli.Modules
 {
@@ -11,8 +13,12 @@ namespace WeddingApp.Cli.Modules
     public class WeddingDb : ConsoleAppBase
     {
         private readonly WeddingDbContext _weddingDb;
+        private readonly EmailService _emailService;
 
-        public WeddingDb(WeddingDbContext weddingDb) => _weddingDb = weddingDb;
+        public WeddingDb(
+            WeddingDbContext weddingDb,
+            EmailService emailService)
+        => (_weddingDb, _emailService) = (weddingDb, emailService);
 
         [Command("update", "Update the wedding DB to the latest migration.")]
         public async Task Update()
@@ -60,6 +66,31 @@ namespace WeddingApp.Cli.Modules
                 config.RsvpPassword = newPassphrase;
                 _weddingDb.Set<WebConfiguration>().Update(config);
                 await _weddingDb.SaveChangesAsync();
+            }
+        }
+
+        [Command("send-meeting-link", "Sends the meeting link to everyone in the database.")]
+        public async Task SendMeetingLink()
+        {
+            var rsvps = await _weddingDb.Rsvps
+                .Where(e => e.Name != null && e.Email != null)
+                .ToListAsync();
+            await Task.WhenAll(rsvps
+                .Select(e => _emailService.SendMeetingLink(e.Name!, e.Email!)));
+            
+            Console.WriteLine("Sent emails to:");
+            foreach (var rsvp in rsvps)
+            {
+                Console.WriteLine(rsvp.NameAndEmail());
+            }
+            Console.WriteLine($"Sent a total of {rsvps.Count} emails out of {await _weddingDb.Rsvps.CountAsync()} RSVPs.");
+
+            var emailsSent = rsvps.Select(e => e.Email).ToArray();
+            var rsvpsSkipped = _weddingDb.Rsvps.Where(e => !emailsSent.Contains(e.Email));
+            Console.WriteLine("RSVPs that were skipped:");
+            foreach (var rsvp in rsvpsSkipped)
+            {
+                Console.WriteLine(rsvp.NameAndEmail());
             }
         }
     }

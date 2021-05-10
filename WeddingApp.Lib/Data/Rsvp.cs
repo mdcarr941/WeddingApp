@@ -35,5 +35,7 @@ namespace WeddingApp.Lib.Data
             }
             return builder.ToString();
         }
+
+        public string NameAndEmail() => $"{Name} ({Email})";
     }
 }

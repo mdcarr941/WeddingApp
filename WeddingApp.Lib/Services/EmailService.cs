@@ -22,6 +22,7 @@ namespace WeddingApp.Lib.Services
     public class EmailService
     {
         private static string? _RsvpEmail = null;
+        private static string? _LinkEmail = null;
         private static readonly Regex EmailVariableRgx
             = new Regex(@"\${([^}]+)}", RegexOptions.Compiled);
 
@@ -29,17 +30,22 @@ namespace WeddingApp.Lib.Services
         {
             if (_RsvpEmail is null)
             {
-                var assembly = Assembly.GetAssembly(typeof(EmailService))
-                    ?? throw new ArgumentNullException($"The assembly containing {nameof(EmailService)} could not be found.");
-                const string resourceName = "WeddingApp.Lib.Services.RsvpEmail.html";
-                using var resourceStream = assembly.GetManifestResourceStream(resourceName)
-                    ?? throw new ArgumentNullException($"Embedded RSVP email could not be found at '{resourceName}'.");
-                using var reader = new StreamReader(resourceStream);
-                _RsvpEmail = await reader.ReadToEndAsync();
+                _RsvpEmail = await ResourceService.GetResourceString(
+                    "WeddingApp.Lib.Services.RsvpEmail.html");
             }
             return EmailVariableRgx.Replace(
                 _RsvpEmail,
                 match => "Code" == match.Groups[1].Value ? confirmation.Code.ToString() : match.Groups[0].Value);
+        }
+
+        public static async Task<string> MeetingLinkEmail()
+        {
+            if (_LinkEmail is null)
+            {
+                _LinkEmail = await ResourceService.GetResourceString(
+                    "WeddingApp.Lib.Services.MeetingLinkEmail.html");
+            }
+            return _LinkEmail;
         }
 
         private readonly EmailConfiguration _configuration;
@@ -93,5 +99,12 @@ namespace WeddingApp.Lib.Services
                 recipientAddr,
                 "Julia & Matthew's Wedding RSVP Confirmation",
                 await RsvpEmail(await _weddingDb.EmailConfirmationCode(recipientAddr)));
+
+        public async Task SendMeetingLink(string recipientName, string recipientAddr)
+            => await Send(
+                recipientName,
+                recipientAddr,
+                "Julia & Matthew's Wedding Link",
+                await MeetingLinkEmail());
     }
 }

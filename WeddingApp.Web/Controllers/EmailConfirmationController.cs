@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WeddingApp.Lib.Data;
+using WeddingApp.Lib.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -11,11 +12,14 @@ namespace WeddingApp.Web.Controllers
     public class EmailConfirmationController : Controller
     {
         private readonly WeddingDbContext _weddingDb;
+        private readonly EmailService _emailService;
 
         public EmailConfirmationController(
-            WeddingDbContext weddingDb)
+            WeddingDbContext weddingDb,
+            EmailService emailService)
         {
             _weddingDb = weddingDb;
+            _emailService = emailService;
         }
 
         [HttpGet, Route("submission/{code}")]
@@ -30,6 +34,7 @@ namespace WeddingApp.Web.Controllers
             var rsvp = await _weddingDb.Rsvps.FindAsync(confirmation.Email);
             rsvp.EmailConfirmed = true;
             await _weddingDb.SaveChangesAsync();
+            await _emailService.SendMeetingLink(rsvp.Name, rsvp.Email);
             return View(new SubmissionViewModel(Success: true));
         }
     }

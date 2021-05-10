@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Services/RsvpEmail.html"/>
-    <EmbeddedResource Include="Services/MeetingLink.html"/>
+    <EmbeddedResource Include="Services/MeetingLinkEmail.html"/>
   </ItemGroup>
 
 </Project>
