@@ -1,5 +1,8 @@
+Copyright (c) 2021, Matthew Carr. All rights reserved.
+
 ### Overview
-This repository contains the code for the backend for my wedding website.
+This repository contains the code for the backend of my wedding website.
+This README is mainly a note to myself.
 It is an ASP.NET app that runs on .NET 5 and uses a SQLite database for persistence.
 
 ### How to Deploy
